@@ -1,5 +1,5 @@
 # SimpleBounties
-A simple, straight-forward Spigot plugin for servers using Minecraft 1.19 that allows players to place and complete bounties on each other. 
+A simple, straight-forward Spigot plugin for servers using Minecraft 1.19 to allow players to place and complete bounties on each other. 
 
 # Dependencies
 EssentialsX and Vault.
