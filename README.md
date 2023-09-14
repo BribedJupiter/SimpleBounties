@@ -5,7 +5,7 @@ A simple, straight-forward Spigot plugin for servers using Minecraft 1.19 to all
 EssentialsX and Vault.
 
 # Install
-Just download and drop the .jar file into your server's plugin folder, and you're done!
+Just download and drop the "Bounties-1.0-RELEASE.jar" file from the target folder into your server's plugin folder, and you're done!
 
 # Permissions
 bounties.* - Allows basic access to the plugin. 
