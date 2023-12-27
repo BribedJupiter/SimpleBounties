@@ -13,11 +13,18 @@ commands:
     permission: bounties.*
     usage: |
       You can use /bn instead of /bounty.
-      /bounty place [target] $reward - Allows you to place a bounty on a target for a monetary reward.
-      /bounty edit [target] $reward - Allows you to edit a bounty you've placed on a certain player. With the permission "bounties.admin", one can edit any bounty by following this syntax: /bounty edit [target] [placer] $reward, though it will not give a refund to the original placer if used in this way.
+
+      Player usage:
+      /bounty place [target player] [$ reward] - Allows you to place a bounty on a target for a monetary reward.
+      /bounty edit [target player] [$ reward] - Allows you to edit the reward of a bounty you've placed on a player.
       /bounty list - Lists all active bounties.
-      /bounty remove [player] - Allows you to remove your bounty on a specific player. With the permission "bounties.admin", one can remove any bounty by following this syntax: /bounty remove [target] [placer], though it will not give a refund to the original placer if used in this way.
-      /bounty clearall - Allows you to remove all active bounties without providing refunds to the placers. Requires the permission "bounties.admin".
+      /bounty remove [target player] - Allows you to delete your bounty on a specific player and get a refund.
+      /bounty pay [player who placed the bounty on you] - Allows you to pay off a bounty placed on you by someone else.
+
+      Admin usage:
+      Edit the reward of any bounty --> /bounty edit [target] [player who placed the bounty] [reward] - (Does not refund players)
+      Remove any bounty --> /bounty remove [target] [player who placed the bounty] - (Does not refund players)
+      Clear all bounties --> /bounty clearall - (Does not refund players)
 
 permissions:
   "bounties.*":

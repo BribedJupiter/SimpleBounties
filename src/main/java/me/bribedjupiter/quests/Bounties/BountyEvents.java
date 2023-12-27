@@ -10,6 +10,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
+// This class will listen for player death events, get the players involved, and initiate a bounty check.
+
 public class BountyEvents implements Listener {
     private final Main main;
     public BountyCommands  bountyCommands = null;
