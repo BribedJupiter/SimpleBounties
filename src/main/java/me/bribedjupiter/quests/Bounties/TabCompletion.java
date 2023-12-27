@@ -1,16 +1,12 @@
 package me.bribedjupiter.quests.Bounties;
 
 import me.bribedjupiter.quests.Main;
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import net.milkbowl.vault.permission.Permission;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +57,11 @@ public class TabCompletion implements TabCompleter {
                                 }
                             }
                         }
-
                     } else {
                         for (Player player : Bukkit.getOnlinePlayers()) {
                             completions.add(player.getName());
                         }
                     }
-
                 }
                 else if (args.length == 3 && !args[0].equalsIgnoreCase("list") && !args[0].equalsIgnoreCase("remove") && !args[0].equalsIgnoreCase("clearall")) {
                     completions.clear();

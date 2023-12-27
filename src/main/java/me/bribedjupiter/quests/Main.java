@@ -7,7 +7,6 @@ import me.bribedjupiter.quests.Bounties.TabCompletion;
 
 //Vault
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
@@ -18,7 +17,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger; // Vault
+import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
     FileConfiguration config = getConfig();
@@ -34,7 +33,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        config.options().copyDefaults(true); // Saves any new added key-value pairs as default so server doesn't get rid of them on restart. I think?
+        config.options().copyDefaults(true); // Saves any new added key-value pairs as default so server doesn't get rid of them on restart
         saveConfig();
         getServer().getPluginCommand("bounty").setExecutor(bountyCommands);
         getServer().getPluginManager().registerEvents(bountyEvents, this);
@@ -49,8 +48,6 @@ public final class Main extends JavaPlugin {
         }
         setupPermissions();
         System.out.println("Bounties Enabled!");
-        //getServer().getPluginManager().registerEvents(new BreakBlock(), this); For BreakBlock
-
     }
 
     @Override
@@ -67,25 +64,20 @@ public final class Main extends JavaPlugin {
         List<String> bountiesToLoad = new ArrayList<String>();
         List<String> tempBountyInfo = new ArrayList<String>();
         bountiesToLoad = config.getStringList("bounties");
-        //Bukkit.getLogger().info("Bounties to load: " + bountiesToLoad.toString());
         int i = 0; // 0, 3, 6, 9, 12, etc.
         int t = 0; // temp counter, for use inside the sets of three
         for (String s : bountiesToLoad) {
             if (i % 3 <= 0) { // reset t every 3
                 t = 0;
-                //Bukkit.getLogger().info("loadBounties in Main - Reset at 3");
             }
             if (t == 0 || t == 1) {
                 tempBountyInfo.add(s);
                 t++;
-                //Bukkit.getLogger().info("tempBountyInfo in main: " + tempBountyInfo.toString());
             }
             else if (t == 2) {
                 tempBountyInfo.add(s);
-                //Bukkit.getLogger().info("tempBountyInfo, should be three, in main: " + tempBountyInfo.toString());
                 bountyCommands.loadBounty(tempBountyInfo); // Tells bountycommands to load a bounty with the tempinfo data
                 tempBountyInfo.clear();
-                //Bukkit.getLogger().info("tempBountyinfo cleared: " + tempBountyInfo.toString());
             }
             i++;
         }
@@ -112,16 +104,9 @@ public final class Main extends JavaPlugin {
         return econ != null;
     }
 
-    /*private boolean setupChat() {
-        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
-        chat = rsp.getProvider();
-        return chat != null;
-    } NOT NEEDED B/C THIS PLUGIN DOES NOT AFFECT CHAT, removed the Dependency for chat */
-
-    private boolean setupPermissions() {
+    private void setupPermissions() {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         perms = rsp.getProvider();
-        return perms != null;
     }
 
     public BountyCommands getBountyCommands() {

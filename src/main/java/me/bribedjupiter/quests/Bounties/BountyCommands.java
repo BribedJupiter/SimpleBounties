@@ -68,47 +68,38 @@ public class BountyCommands implements CommandExecutor {
                 }
                 else if (args[0].equalsIgnoreCase("remove")) {
                     // cancel bounty
-                    //main.getLogger().info("args.length is " + args.length);
                     try {
                         if (sender instanceof Player) {
                             if (args.length >= 3) {
                                 if (args[1] != null && args[2] != null && (sender.isOp() || perms.has(((Player) sender).getPlayer(), "bounties.admin"))) {
-                                    //main.getLogger().info("Remove - sender is a player and has bounties.admin permission");
                                     cancelBounty(sender, args[1], args[2]); //Should allow someone w/ permission to remove any bounty that has been placed
                                 }
                                 else {
                                     sender.sendMessage(ChatColor.RED + "You have too many arguments");
                                 }
                             } else {
-                                //main.getLogger().info("Remove - sender is a player but args are <3");
                                 cancelBounty(sender, args[1], "null");
                             }
-                            //main.getLogger().info("Player tried to remove a bounty");
                         } else {
-                            //main.getLogger().info("Remove - sender is NOT a player");
                             if (args.length >= 3) {
                                 cancelBounty(sender, args[1], args[2]);
                             } else {
                                 cancelBounty(sender, args[1], "God");
                             }
                             // Server needs to specify which bounty to remove
-                            //main.getLogger().info("Server tried to remove a bounty");
                         }
                     }
                     catch (Exception e) {
                         sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
-                        //e.printStackTrace();
                     }
                     return true;
                 }
                 else if (args[0].equalsIgnoreCase("edit")) {
                     // edit bounty
-                    //main.getLogger().info("args.length is " + args.length);
                     try {
                         if (sender instanceof Player) {
                             if (args.length >= 4) {
                                 if (args[1] != null && args[2] != null && args[3] != null && (sender.isOp() || perms.has(((Player) sender).getPlayer(), "bounties.admin"))) {
-                                    //main.getLogger().info("Edit - sender is a player and has bounties.admin permission");
                                     Double.parseDouble(args[3]); //To make sure the player gave a number as a reward
                                     if (CheckIfNegative(args[3])) {
                                         sender.sendMessage(ChatColor.RED + "You cannot enter a negative reward");
@@ -120,7 +111,6 @@ public class BountyCommands implements CommandExecutor {
                                     sender.sendMessage(ChatColor.RED + "You have too many arguments");
                                 }
                             } else {
-                                //main.getLogger().info("Edit - sender is a player but args are <4");
                                 Double.parseDouble(args[2]); //To make sure the player gave a number as a reward
                                 if (CheckIfNegative(args[2])) {
                                     sender.sendMessage(ChatColor.RED + "You cannot enter a negative reward");
@@ -129,7 +119,6 @@ public class BountyCommands implements CommandExecutor {
                                 }
                             }
                         } else {
-                            //main.getLogger().info("Edit - sender is NOT a player");
                             if (args.length >= 4) {
                                 Double.parseDouble(args[3]);
                                 if (CheckIfNegative(args[3])) {
@@ -150,7 +139,6 @@ public class BountyCommands implements CommandExecutor {
                     }
                     catch (Exception e) {
                         sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
-                        //e.printStackTrace();
                     }
                     return true;
                 }
@@ -191,7 +179,6 @@ public class BountyCommands implements CommandExecutor {
                 sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
                 return true;
             }
-
         } else {
             sender.sendMessage(ChatColor.RED + "You do not have permission to use this command");
             return true;
@@ -201,7 +188,6 @@ public class BountyCommands implements CommandExecutor {
     private void placeBounty(CommandSender sender, String target, String reward) {
         Bounty bounty = new Bounty();
         if (isValidTarget(target)) { // Check if player exists with this name, only works for online players
-            //main.getLogger().info("Bounty place target is valid");
             bounty.target = target; // Will this work for saving data? I guess you can only kill them when online, thus can only complete bounties when online
             bounty.reward = reward;
             if (sender instanceof Player) { // If sender is a player
@@ -241,16 +227,12 @@ public class BountyCommands implements CommandExecutor {
         // Cancel a bounty on a target that the sender has placed.
         boolean found = false;
         Bounty toCancel = new Bounty();
-        //main.getLogger().info("cancelBounty intro - Placer is " + placer);
         if (isValidTarget(target)) {
-            //main.getLogger().info("Bounty remove target is valid");
             if (sender instanceof Player && placer == "null") {
-                //main.getLogger().info("cancelBounty - sender is a player and placer == null");
                 for (Bounty bounty : bounties) {
                       if (bounty.sender.equalsIgnoreCase(sender.getName())) {
                           if (bounty.target.equalsIgnoreCase(target)) {
                               found = true;
-                              //main.getLogger().info("Bounty remove player - bounty found");
                               toCancel = bounty;
                               Player p = ((Player) sender).getPlayer();
                               Deposit(p, bounty.reward);
@@ -270,13 +252,10 @@ public class BountyCommands implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You have not placed a bounty on " + target);
                 }
             } else {
-                //main.getLogger().info("cancelBounty - sender is not a player or placer != null");
-                //main.getLogger().info("Placer is " + placer);
                 for (Bounty bounty : bounties) {
                     if (bounty.sender.equalsIgnoreCase(placer)) {
                         if (bounty.target.equalsIgnoreCase(target)) {
                             found = true;
-                            //main.getLogger().info("Bounty remove server - bounty found");
                             toCancel = bounty;
                             sender.sendMessage(ChatColor.GREEN + "Bounty on " + target + " removed");
                             break;
@@ -303,15 +282,11 @@ public class BountyCommands implements CommandExecutor {
     private void editBounty (CommandSender sender, String target, String placer, String reward) { // Only can change reward
         boolean found = false;
         if (isValidTarget(target)) {
-            //main.getLogger().info("Bounty edit target is valid");
-            //main.getLogger().info("cancelBounty intro - Placer is " + placer);
             if (sender instanceof Player && placer == "null") {
-                //main.getLogger().info("cancelBounty - sender is a player and placer == null");
                 for (Bounty bounty : bounties) {
                     if (bounty.sender.equalsIgnoreCase(sender.getName())) {
                         if (bounty.target.equalsIgnoreCase(target)) {
                             found = true;
-                            //main.getLogger().info("Bounty edit player - bounty found");
                             Player p = ((Player) sender).getPlayer();
                             String oldReward = bounty.reward;
                             Deposit(p, oldReward);
@@ -338,13 +313,10 @@ public class BountyCommands implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You have not placed a bounty on " + target);
                 }
             } else {
-                //main.getLogger().info("editBounty - sender is not a player or placer != null");
-                //main.getLogger().info("Placer is " + placer);
                 for (Bounty bounty : bounties) {
                     if (bounty.sender.equalsIgnoreCase(placer)) { // Server sets bounties as 'God'
                         if (bounty.target.equalsIgnoreCase(target)) {
                             found = true;
-                            //main.getLogger().info("Bounty edit server - bounty found");
                             bounty.reward = reward;
                             sender.sendMessage(ChatColor.GREEN + target + " reward edited to " + ChatColor.RED + "$" + reward);
                             break;
@@ -369,12 +341,10 @@ public class BountyCommands implements CommandExecutor {
     public void loadBounty(List<String> bounty) { // Called from Main when loading bounties, loads bounties
         Bounty loadBounty = new Bounty();
         if (bounty.toArray().length != 3) {
-            //main.getLogger().info("loadBounty - Bounty to be added has improper length");
         } else {
             loadBounty.sender = bounty.get(0);
             loadBounty.target = bounty.get(1);
             loadBounty.reward = bounty.get(2);
-            //main.getLogger().info("loadBounty - bounty loaded!");
         }
         bounties.add(loadBounty);
     }
@@ -392,21 +362,13 @@ public class BountyCommands implements CommandExecutor {
     }
 
     private boolean isValidTarget(String target) {
-        /*if (Bukkit.getPlayerExact(target) != null) {
-            return true;
-        }
-        else {
-            return false;
-        }*/
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getName().equalsIgnoreCase(target)) {
-                //main.getLogger().info("Online Target - Target is valid");
                 return true;
             }
         }
         for (OfflinePlayer op : Bukkit.getOfflinePlayers()) {
             if (op.getName().equalsIgnoreCase(target)) {
-                //main.getLogger().info("Offline Target - Target is valid");
                 return true;
             }
         }
@@ -415,7 +377,6 @@ public class BountyCommands implements CommandExecutor {
     }
 
     public boolean isValidBounty(String target) {
-        //Bukkit.getLogger().info("isValidBounty: Checking for " + target);
         for (Bounty b : bounties) {
             if (b.target.equalsIgnoreCase(target)) {
                 return true;
@@ -452,7 +413,6 @@ public class BountyCommands implements CommandExecutor {
         String reward = "$$$";
         for (Bounty b : bounties) {
             if (b.target.equalsIgnoreCase(killed)) {
-                //Bukkit.getLogger().info("Completed bounty on " + b.target + " removed from Bounties");
                 toCancel.add(b);
             }
         }
@@ -474,7 +434,6 @@ public class BountyCommands implements CommandExecutor {
         double d = 0.0;
         try {
             d = Double.parseDouble(amt);
-            //main.getLogger().info("amt is now Doubled: " + String.valueOf(d));
         }
         catch (Exception err) {
             main.getLogger().info("Could not convert String reward to a Double: " + String.valueOf(d));
@@ -497,7 +456,7 @@ public class BountyCommands implements CommandExecutor {
                 p.sendMessage(ChatColor.GREEN + "$" + amt + " has been withdrawn. Your new balance is " + ChatColor.RED + "$" + iBal);
             }
             catch (Exception err) {
-                System.out.println("Could not send player message");
+                main.getLogger().warning("Could not send player message");
             }
             return true;
         }
@@ -507,7 +466,7 @@ public class BountyCommands implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "$" + amt + " has failed to be withdrawn. Your balance is " + ChatColor.RED + "$" + iBal);
             }
             catch (Exception err) {
-                System.out.println("Could not send player message");
+                main.getLogger().warning("Could not send player message");
             }
             return false;
         }
@@ -516,10 +475,9 @@ public class BountyCommands implements CommandExecutor {
         double d = 0.0;
         try {
             d = Double.parseDouble(amt);
-            //main.getLogger().info("amt is now Doubled: " + String.valueOf(d));
         }
         catch (Exception err) {
-            //main.getLogger().info("Could not Double reward: " + String.valueOf(d));
+            main.getLogger().warning("Could not parse reward string: " + String.valueOf(d));
         }
         Economy e = main.getEconomy();
         EconomyResponse r = e.depositPlayer(p, d);
@@ -533,7 +491,7 @@ public class BountyCommands implements CommandExecutor {
                 p.sendMessage(ChatColor.GREEN + "$" + amt + " has been deposited. Your new balance is " + ChatColor.RED + "$" + iBal);
             }
             catch (Exception err) {
-                System.out.println("Could not send player message");
+                main.getLogger().warning("Could not send player message");
             }
         }
         else {
@@ -542,7 +500,7 @@ public class BountyCommands implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "$" + amt + " has failed to be deposited. Your balance is " + ChatColor.RED + "$" + iBal);
             }
             catch (Exception err) {
-                System.out.println("Could not send player message");
+                main.getLogger().warning("Could not send player message");
             }
         }
     }

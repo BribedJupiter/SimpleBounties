@@ -1,5 +1,5 @@
 # SimpleBounties
-A simple, straight-forward Spigot plugin for servers using Minecraft 1.19 to allow players to place and complete bounties on each other. 
+A simple, straight-forward Spigot plugin for servers using Minecraft 1.19+ to allow players to place and complete bounties on each other. 
 
 # Dependencies
 EssentialsX and Vault.
@@ -41,3 +41,19 @@ They can do /bounty edit [bounty target] [bounty placer] [new reward] to change 
 They can do /bounty remove [bounty target] [bounty placer] to remove another player's bounty without refunding the original bounty placers.
 
 Enjoy!
+
+# Future ideas
+- Adding the option to give rewards that aren't solely monetary, such as items. 
+- Adding a bounty board or headhunter system, where bounties could be placed as signs and players would have to go to a physical location to start or collect a bounty. 
+ Maybe they would need to return with some item from the player they killed, like a head, to complete the bounty. 
+- Add a log of completed bounties, maybe available as a book or a list of heads.
+- Add integration with Discord plugins so completion messages show up in Discord chats.
+- Add the ability to create a list of players that cannot have a bounty.
+
+# Known issues
+As of version 1.0-RELEASE, if one is using the "Duels" plugin, bounties will be completed upon the completion of a duel.
+
+### Note:
+Sometimes throughout the code you'll notice the word Quests in reference to this plugin. Originally, it
+was intended to become a fully featured questing plugin, but as development progressed I shifted focus and narrowed 
+the scope to just the bounties portion of the plugin. 
