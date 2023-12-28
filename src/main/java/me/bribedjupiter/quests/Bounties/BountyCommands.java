@@ -41,9 +41,11 @@ public class BountyCommands implements CommandExecutor {
             + ChatColor.GOLD + "\n/bounty place [target player] [$ reward amount] "
             + ChatColor.WHITE + "- Place a bounty on a target player. \n"
             + ChatColor.GOLD + "/bounty edit [target player] [$ new reward amount] "
-            + ChatColor.WHITE + "- Change the reward amount on an already placed bounty. \n"
+            + ChatColor.WHITE + "- Change the reward amount on a bounty you placed. \n"
             + ChatColor.GOLD + "/bounty remove [target player] "
-            + ChatColor.WHITE + "- Remove an already placed bounty. \nYou can also do "
+            + ChatColor.WHITE + "- Remove a bounty you placed. \nYou can also do "
+            + ChatColor.GOLD + "/bounty pay [player who placed the bounty] "
+            + ChatColor.WHITE + "- Pay off a bounty placed on you. \nYou can also do "
             + ChatColor.GOLD + "/bn"
             + ChatColor.WHITE + " instead of "
             + ChatColor.GOLD + "/bounty";
@@ -55,13 +57,12 @@ public class BountyCommands implements CommandExecutor {
         this.perms = perms;
     }
 
-    // bounty (place, cancel, edit, list, clearall) player reward
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (perms == null) {
             perms = Main.getPermissions();
         }
+        // help, place, remove, edit, list, clearall, pay
         if (sender.isOp() || perms.has(sender, "bounties.*")) {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("help")) {
@@ -86,7 +87,7 @@ public class BountyCommands implements CommandExecutor {
                         }
                     }
                     catch (Exception e) {
-                        sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
+                        sender.sendMessage(ChatColor.RED + "Argument error");
                         //e.printStackTrace();
                     }
                     return true;
@@ -115,7 +116,7 @@ public class BountyCommands implements CommandExecutor {
                         }
                     }
                     catch (Exception e) {
-                        sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
+                        sender.sendMessage(ChatColor.RED + "Argument error");
                     }
                     return true;
                 }
@@ -163,7 +164,7 @@ public class BountyCommands implements CommandExecutor {
                         }
                     }
                     catch (Exception e) {
-                        sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
+                        sender.sendMessage(ChatColor.RED + "Argument error");
                     }
                     return true;
                 }
@@ -175,11 +176,30 @@ public class BountyCommands implements CommandExecutor {
                     } else {
                         for (int i = 0; i < +bounties.toArray().length; i++) { // loops over all bounties and lists them in chat
                             String message = "BOUNTY: " + bounties.get(i).target + " PLACER: " + bounties.get(i).sender + " REWARD: " + ChatColor.RED + "$" + bounties.get(i).reward;
-                            sender.sendMessage(ChatColor.GOLD + message); // update later
+                            sender.sendMessage(ChatColor.GOLD + message);
                         }
-                        sender.sendMessage(ChatColor.GREEN + "Bounties shown");
+                        sender.sendMessage(ChatColor.GREEN + "Bounties shown above");
                         return true;
                     }
+                }
+                else if (args[0].equalsIgnoreCase("pay")) {
+                    // allow a player to pay off a bounty placed on them, no matter which permission they have
+                    if (sender instanceof Player) {
+                        // Check if too many or too few args have been provided
+                        // Format: /bounty pay [placer]
+                        if (args.length < 2) {
+                            sender.sendMessage(ChatColor.RED + "Too few arguments provided");
+                            return true;
+                        }
+                        if (args.length > 2) {
+                            sender.sendMessage(ChatColor.RED + "Too many arguments provided");
+                            return true;
+                        }
+                        payBounty(sender, args[1]);
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "You are not a player and therefore cannot pay off a bounty placed on you");
+                    }
+                    return true;
                 }
                 else if (args[0].equalsIgnoreCase("clearall")) {
                     // clear all bounties only if player is an operator or has permission
@@ -201,12 +221,28 @@ public class BountyCommands implements CommandExecutor {
                     return true;
                 }
             } else {
-                sender.sendMessage(ChatColor.RED + "You are missing arguments or a reward you entered was not a number");
+                sender.sendMessage(ChatColor.RED + "You are missing arguments");
                 return true;
             }
         } else {
             sender.sendMessage(ChatColor.RED + "You do not have permission to use this command");
             return true;
+        }
+    }
+
+    private void payBounty(CommandSender sender, String placer) {
+        // 1. See if there is a valid bounty. 2. Remove funds. 3. Remove bounty. 4. Send completion message
+        if (hasPlacedBounty(placer, sender.getName())) {
+            Bounty b = getBounty(placer, sender.getName());
+            String reward = b.reward;
+            if (Withdraw(((Player) sender).getPlayer(), reward)) {
+                bounties.remove(b);
+                sender.sendMessage(ChatColor.GREEN + "The bounty placed on you by " + ChatColor.GOLD + placer + ChatColor.GREEN + " has been paid!");
+            } else {
+                sender.sendMessage(ChatColor.RED + "Insufficient funds to pay bounty");
+            }
+        } else {
+            sender.sendMessage(ChatColor.RED + "Could not find bounty");
         }
     }
 
@@ -245,7 +281,6 @@ public class BountyCommands implements CommandExecutor {
         else {
             sender.sendMessage(ChatColor.RED + "Unknown player");
         }
-
     }
 
     private void cancelBounty(CommandSender sender, String target, String placer) { // CommandSender, target, person who placed the bounty
@@ -410,6 +445,17 @@ public class BountyCommands implements CommandExecutor {
         return false;
     }
 
+    public Bounty getBounty(String placer, String target) {
+        for (Bounty b : bounties) {
+            if (b.sender.equalsIgnoreCase(placer)) {
+                if (b.target.equalsIgnoreCase(target)) {
+                    return b;
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean hasPlacedBounty(String placer, String target) {
         for (Bounty b : bounties) {
             if (b.sender.equalsIgnoreCase(placer)) {
@@ -448,11 +494,9 @@ public class BountyCommands implements CommandExecutor {
             Deposit(p, amt);
             bounties.remove(b);
         }
-
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(ChatColor.GOLD + killer + " has completed a BOUNTY on " + killed + " for " + ChatColor.RED + "$" + reward);
         }
-
     }
 
     public boolean Withdraw (Player p, String amt) {

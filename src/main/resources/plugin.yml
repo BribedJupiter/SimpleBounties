@@ -8,7 +8,7 @@ depend: [Essentials, Vault]
 
 commands:
   bounty:
-    description: Sets a bounty on a player. Do /bounty help to learn how to use the plugin.
+    description: Accesses the Bounties plugin. Do /bounty help to learn how to use it.
     aliases: [ bn ]
     permission: bounties.*
     usage: |

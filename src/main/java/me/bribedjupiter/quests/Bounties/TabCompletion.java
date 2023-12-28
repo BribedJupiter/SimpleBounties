@@ -38,14 +38,15 @@ public class TabCompletion implements TabCompleter {
                     completions.add("edit");
                     completions.add("remove");
                     completions.add("list");
+                    completions.add("pay");
                     if (p.isOp() || perms.has(((Player) sender).getPlayer(), "bounties.admin")) {
                         completions.add("clearall");
                     }
                 }
                 else if (args.length == 2 && !args[0].equalsIgnoreCase("list") && !args[0].equalsIgnoreCase("clearall")) {
                     completions.clear();
+                    bountyCommands = main.getBountyCommands();
                     if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("edit")) {
-                        bountyCommands = main.getBountyCommands();
                         if (perms.has(sender, "bounties.admin") || sender.isOp()) {
                             for (Bounty b : bountyCommands.bounties) {
                                 completions.add(b.target);
@@ -57,7 +58,16 @@ public class TabCompletion implements TabCompleter {
                                 }
                             }
                         }
-                    } else {
+                    }
+                    else if (args[0].equalsIgnoreCase("pay")) {
+                        // Get a list of all players who have placed bounties on the sender
+                        for (Bounty b : bountyCommands.bounties) {
+                            if (b.target.equals(sender.getName())) {
+                                completions.add(b.sender); // If the target of the bounty is the player who sent the command, then add that placer to the list
+                            }
+                        }
+                    }
+                    else {
                         for (Player player : Bukkit.getOnlinePlayers()) {
                             completions.add(player.getName());
                         }
