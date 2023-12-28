@@ -22,17 +22,30 @@ public class TabCompletion implements TabCompleter {
         this.perms = perms;
     }
 
+    // Regular user
+    // help
+    // list
+    // remove TARGET
+    // pay    PLACER
+    // place  TARGET REWARD
+    // edit   TARGET REWARD
+
+    // Admin only
+    // clearall
+    // edit    TARGET (PLACER) REWARD
+    // remove  TARGET (PLACER)
+
     @Override
     public List<String> onTabComplete (CommandSender sender, Command cmd, String label, String[] args) {
         if (perms == null) {
             perms = Main.getPermissions();
         }
         List<String> completions = new ArrayList<String>();
-        if (cmd.getName().equalsIgnoreCase("bounty") && args.length >= 0) {
+        if (cmd.getName().equalsIgnoreCase("bounty")) {
             if (sender instanceof Player) {
+                bountyCommands = main.getBountyCommands();
                 Player p = (Player) sender;
                 if (args.length <= 1) {
-                    completions.clear();
                     completions.add("place");
                     completions.add("help");
                     completions.add("edit");
@@ -42,16 +55,17 @@ public class TabCompletion implements TabCompleter {
                     if (p.isOp() || perms.has(((Player) sender).getPlayer(), "bounties.admin")) {
                         completions.add("clearall");
                     }
+                    return completions;
                 }
-                else if (args.length == 2 && !args[0].equalsIgnoreCase("list") && !args[0].equalsIgnoreCase("clearall")) {
-                    completions.clear();
-                    bountyCommands = main.getBountyCommands();
+                else if (args.length == 2 && (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("pay") || args[0].equalsIgnoreCase("place") || args[0].equalsIgnoreCase("edit"))) {
                     if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("edit")) {
+                        // If we have an admin, we want all of the targets to show
                         if (perms.has(sender, "bounties.admin") || sender.isOp()) {
                             for (Bounty b : bountyCommands.bounties) {
                                 completions.add(b.target);
                             }
                         } else {
+                            // Otherwise, we only want to show a player the bounties they themselves have placed
                             for (Bounty b : bountyCommands.bounties) {
                                 if (b.sender.equalsIgnoreCase(sender.getName())) { // Servers don't have auto-completion, so I don't need to add "God" here
                                     completions.add(b.target); // Only adds players the player has already placed a bounty on, the only ones they can edit or remove
@@ -67,20 +81,34 @@ public class TabCompletion implements TabCompleter {
                             }
                         }
                     }
-                    else {
+                    else { // If it is place
                         for (Player player : Bukkit.getOnlinePlayers()) {
                             completions.add(player.getName());
                         }
                     }
+                    return completions;
                 }
-                else if (args.length == 3 && !args[0].equalsIgnoreCase("list") && !args[0].equalsIgnoreCase("remove") && !args[0].equalsIgnoreCase("clearall")) {
-                    completions.clear();
+                else if (args.length == 3 && (args[0].equalsIgnoreCase("place") || args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("remove"))) {
+                    // TODO: Add something to show that this argument is optional in remove
+                    if (!args[0].equalsIgnoreCase("remove")) {
+                        completions.add("10");
+                        completions.add("100");
+                        completions.add("1000");
+                    }
+                    if ((perms.has(sender, "bounties.admin") || sender.isOp()) && !args[0].equalsIgnoreCase("place")) {
+                        for (Bounty b : bountyCommands.bounties) {
+                            // Add the list of people who have placed bounties so an admin can specify which particular bounty they want to edit or remove
+                            completions.add(b.sender);
+                        }
+                    }
+                    return completions;
+                }
+                else if (args.length == 4 && args[0].equalsIgnoreCase("edit") && (perms.has(sender, "bounties.admin") || sender.isOp())) {
+                    // TODO: If the edit argument before is numeric, then we should not display an argument here
                     completions.add("10");
                     completions.add("100");
                     completions.add("1000");
-                }
-                else {
-                    completions.clear();
+                    return completions;
                 }
                 return completions;
             }
