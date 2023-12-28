@@ -89,7 +89,6 @@ public class TabCompletion implements TabCompleter {
                     return completions;
                 }
                 else if (args.length == 3 && (args[0].equalsIgnoreCase("place") || args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("remove"))) {
-                    // TODO: Add something to show that this argument is optional in remove
                     if (!args[0].equalsIgnoreCase("remove")) {
                         completions.add("10");
                         completions.add("100");
@@ -104,10 +103,13 @@ public class TabCompletion implements TabCompleter {
                     return completions;
                 }
                 else if (args.length == 4 && args[0].equalsIgnoreCase("edit") && (perms.has(sender, "bounties.admin") || sender.isOp())) {
-                    // TODO: If the edit argument before is numeric, then we should not display an argument here
-                    completions.add("10");
-                    completions.add("100");
-                    completions.add("1000");
+                    try {
+                        Double d = Double.parseDouble(args[2]);
+                    } catch (Exception e) {
+                        completions.add("10");
+                        completions.add("100");
+                        completions.add("1000");
+                    }
                     return completions;
                 }
                 return completions;
