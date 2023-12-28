@@ -3,7 +3,10 @@ A simple, straight-forward Spigot plugin for servers using Minecraft 1.19+ to al
 
 ### Version 1.1
 - Add the ability to pay off your own bounty
-- Add a chat-based bounty history log
+- Clean up auto completion
+- Clean up error messages
+- Clean up code
+- Revise /bounty help
 
 # Dependencies
 EssentialsX and Vault.

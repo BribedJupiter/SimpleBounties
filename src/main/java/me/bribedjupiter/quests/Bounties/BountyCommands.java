@@ -39,6 +39,7 @@ public class BountyCommands implements CommandExecutor {
             + ChatColor.WHITE + " instead of "
             + ChatColor.GOLD + "/bounty\n"
             + ChatColor.WHITE + "If you remove or edit someone else's bounty, or clear all bounties, refunds will not be issued to the original bounty placers.";
+
     public final String bountyHelpMessage = ChatColor.WHITE + "\nHow to use the " + ChatColor.GOLD + "/bounty " + ChatColor.WHITE + "command:"
             + ChatColor.GOLD + "\n/bounty place [target player] [$ reward amount] "
             + ChatColor.WHITE + "- Place a bounty on a target player. \n"
@@ -89,8 +90,7 @@ public class BountyCommands implements CommandExecutor {
                         }
                     }
                     catch (Exception e) {
-                        sender.sendMessage(ChatColor.RED + "Argument error");
-                        //e.printStackTrace();
+                        sender.sendMessage(ChatColor.RED + "Invalid player or reward");
                     }
                     return true;
                 }
@@ -118,7 +118,7 @@ public class BountyCommands implements CommandExecutor {
                         }
                     }
                     catch (Exception e) {
-                        sender.sendMessage(ChatColor.RED + "Argument error");
+                        sender.sendMessage(ChatColor.RED + "Invalid player or reward");
                     }
                     return true;
                 }
@@ -166,7 +166,7 @@ public class BountyCommands implements CommandExecutor {
                         }
                     }
                     catch (Exception e) {
-                        sender.sendMessage(ChatColor.RED + "Argument error");
+                        sender.sendMessage(ChatColor.RED + "Invalid player or reward");
                     }
                     return true;
                 }
@@ -264,7 +264,7 @@ public class BountyCommands implements CommandExecutor {
                             player.sendMessage(ChatColor.GOLD + pSender.getName() + " has placed a BOUNTY on " + target + " for " + ChatColor.RED + "$" + reward);
                         }
                     } else {
-                        sender.sendMessage(ChatColor.RED + "Bounty not placed: insufficient funds or provided reward is not a number");
+                        sender.sendMessage(ChatColor.RED + "Bounty not placed: insufficient funds");
                     }
                 }
                 else {
@@ -281,7 +281,7 @@ public class BountyCommands implements CommandExecutor {
             }
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Unknown player");
+            sender.sendMessage(ChatColor.RED + "Invalid player");
         }
     }
 
@@ -336,9 +336,8 @@ public class BountyCommands implements CommandExecutor {
             }
             bounties.remove(toCancel);
         } else {
-                sender.sendMessage(ChatColor.RED + "Unknown player");
+                sender.sendMessage(ChatColor.RED + "Invalid player");
         }
-
     }
 
     private void editBounty (CommandSender sender, String target, String placer, String reward) { // Only can change reward
@@ -354,10 +353,10 @@ public class BountyCommands implements CommandExecutor {
                             Deposit(p, oldReward);
                             if (Withdraw(p, reward)) {
                                 bounty.reward = reward;
-                                sender.sendMessage(ChatColor.GREEN + "Bounty on " +  target + ": reward edited to " + ChatColor.RED + "$" + reward);
+                                sender.sendMessage(ChatColor.GREEN + "Reward for Bounty on " +  target + " is now " + ChatColor.RED + "$" + reward);
                             }
                             else {
-                                sender.sendMessage(ChatColor.RED + "Bounty on " + target + ": unable to edit reward to " + ChatColor.RED + "$" + reward);
+                                sender.sendMessage(ChatColor.RED + "Insufficient funds. Unable to edit reward for Bounty on " + target + " to " + ChatColor.RED + "$" + reward);
                                 Withdraw(p, oldReward);
                             }
                             break;
@@ -395,9 +394,8 @@ public class BountyCommands implements CommandExecutor {
                 }
             }
         } else {
-            sender.sendMessage(ChatColor.RED + "Unknown player");
+            sender.sendMessage(ChatColor.RED + "Invalid player");
         }
-
     }
 
     public void loadBounty(List<String> bounty) { // Called from Main when loading bounties, loads bounties
@@ -434,7 +432,7 @@ public class BountyCommands implements CommandExecutor {
                 return true;
             }
         }
-        main.getLogger().info("Target is invalid");
+        main.getLogger().info("Bounty target is invalid");
         return false;
     }
 
@@ -507,7 +505,7 @@ public class BountyCommands implements CommandExecutor {
             d = Double.parseDouble(amt);
         }
         catch (Exception err) {
-            main.getLogger().info("Could not convert String reward to a Double: " + String.valueOf(d));
+            main.getLogger().warning("Could not parse reward string: " + String.valueOf(d));
         }
         Economy e = main.getEconomy();
         double bal;
@@ -532,7 +530,7 @@ public class BountyCommands implements CommandExecutor {
             return true;
         }
         else {
-            main.getLogger().info("Transaction failure");
+            main.getLogger().warning("Transaction failure");
             try {
                 p.sendMessage(ChatColor.RED + "$" + amt + " has failed to be withdrawn. Your balance is " + ChatColor.RED + "$" + iBal);
             }
@@ -566,7 +564,7 @@ public class BountyCommands implements CommandExecutor {
             }
         }
         else {
-            main.getLogger().info("Transaction failure");
+            main.getLogger().warning("Transaction failure");
             try {
                 p.sendMessage(ChatColor.RED + "$" + amt + " has failed to be deposited. Your balance is " + ChatColor.RED + "$" + iBal);
             }

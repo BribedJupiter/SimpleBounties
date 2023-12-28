@@ -90,9 +90,9 @@ public class TabCompletion implements TabCompleter {
                 }
                 else if (args.length == 3 && (args[0].equalsIgnoreCase("place") || args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("remove"))) {
                     if (!args[0].equalsIgnoreCase("remove")) {
-                        completions.add("10");
                         completions.add("100");
                         completions.add("1000");
+                        completions.add("10000");
                     }
                     if ((perms.has(sender, "bounties.admin") || sender.isOp()) && !args[0].equalsIgnoreCase("place")) {
                         for (Bounty b : bountyCommands.bounties) {
@@ -106,9 +106,9 @@ public class TabCompletion implements TabCompleter {
                     try {
                         Double d = Double.parseDouble(args[2]);
                     } catch (Exception e) {
-                        completions.add("10");
                         completions.add("100");
                         completions.add("1000");
+                        completions.add("10000");
                     }
                     return completions;
                 }
