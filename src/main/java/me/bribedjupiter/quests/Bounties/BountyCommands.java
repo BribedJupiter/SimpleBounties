@@ -23,6 +23,31 @@ public class BountyCommands implements CommandExecutor {
     private static Permission perms = null;
     public List<Bounty> bounties = new ArrayList<Bounty>();
 
+    // For display when a /bounty help is entered
+    public final String bountyHelpMessageAdmin = ChatColor.WHITE + "\nHow to use the " + ChatColor.GOLD + "/bounty " + ChatColor.WHITE + "command as OP:"
+            + ChatColor.GOLD + "\n/bounty place [target player] [$ reward amount] "
+            + ChatColor.WHITE + "- Place a bounty on a target player. \n"
+            + ChatColor.GOLD + "/bounty edit [target player] [player who placed the bounty (optional)] [$ new reward amount] "
+            + ChatColor.WHITE + "- Change the reward amount on an already placed bounty. If no bounty placer is specified, it is assumed to be you. \n"
+            + ChatColor.GOLD + "/bounty remove [target player] [player who placed the bounty (optional)] "
+            + ChatColor.WHITE + "- Remove an already placed bounty. If no bounty placer is specified, it is assumed to be you. \n"
+            + ChatColor.GOLD + "/bounty clearall "
+            + ChatColor.WHITE + "- Clear all bounties. \nYou can also do "
+            + ChatColor.GOLD + "/bn"
+            + ChatColor.WHITE + " instead of "
+            + ChatColor.GOLD + "/bounty\n"
+            + ChatColor.WHITE + "If you remove or edit someone else's bounty, or clear all bounties, refunds will not be issued to the original bounty placers.";
+    public final String bountyHelpMessage = ChatColor.WHITE + "\nHow to use the " + ChatColor.GOLD + "/bounty " + ChatColor.WHITE + "command:"
+            + ChatColor.GOLD + "\n/bounty place [target player] [$ reward amount] "
+            + ChatColor.WHITE + "- Place a bounty on a target player. \n"
+            + ChatColor.GOLD + "/bounty edit [target player] [$ new reward amount] "
+            + ChatColor.WHITE + "- Change the reward amount on an already placed bounty. \n"
+            + ChatColor.GOLD + "/bounty remove [target player] "
+            + ChatColor.WHITE + "- Remove an already placed bounty. \nYou can also do "
+            + ChatColor.GOLD + "/bn"
+            + ChatColor.WHITE + " instead of "
+            + ChatColor.GOLD + "/bounty";
+
     public BountyCommands (Main main, Economy econ, Permission perms)
     {
         this.main = main;
@@ -42,12 +67,12 @@ public class BountyCommands implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("help")) {
                     if (sender instanceof Player) {
                         if (perms.has(((Player) sender).getPlayer(), "bounties.admin") || sender.isOp()) {
-                            sender.sendMessage(ChatColor.GOLD + "How to use the /bounty command: \n/bounty place target $reward " + ChatColor.WHITE + "- Place a bounty on a target for a reward \n" + ChatColor.GOLD + "/bounty edit target (optional - placer) $new_reward " + ChatColor.WHITE + "- Change the reward of an already placed bounty \n" + ChatColor.GOLD + "/bounty remove target (optional - placer) " + ChatColor.WHITE + "- Remove an already placed bounty \n" + ChatColor.GOLD + "/bounty clearall " + ChatColor.WHITE + "- Clear all bounties \nYou can also do " + ChatColor.GOLD + "/bn" + ChatColor.WHITE + " instead of " + ChatColor.GOLD + "/bounty\n" + ChatColor.WHITE + "If you remove or edit someone else's bounty, or clear all bounties, refunds will not be issued to the original bounty placers");
+                            sender.sendMessage(bountyHelpMessageAdmin);
                         } else {
-                            sender.sendMessage(ChatColor.GOLD + "How to use the /bounty command: \n/bounty place target $reward " + ChatColor.WHITE + "- Place a bounty on a target for a reward \n" + ChatColor.GOLD + "/bounty edit target $new_reward " + ChatColor.WHITE + "- Change the reward of an already placed bounty \n" + ChatColor.GOLD + "/bounty remove target " + ChatColor.WHITE + "- Remove an already placed bounty \nYou can also do " + ChatColor.GOLD + "/bn" + ChatColor.WHITE + " instead of " + ChatColor.GOLD + "/bounty");
+                            sender.sendMessage(bountyHelpMessage);
                         }
                     } else {
-                        sender.sendMessage(ChatColor.GOLD + "How to use the /bounty command: \n/bounty place target $reward " + ChatColor.WHITE + "- Place a bounty on a target for a reward \n" + ChatColor.GOLD + "/bounty edit target (optional - placer) $new_reward " + ChatColor.WHITE + "- Change the reward of an already placed bounty \n" + ChatColor.GOLD + "/bounty remove target (optional - placer) " + ChatColor.WHITE + "- Remove an already placed bounty \n" + ChatColor.GOLD + "/bounty clearall " + ChatColor.WHITE + "- Clear all bounties \nYou can also do " + ChatColor.GOLD + "/bn" + ChatColor.WHITE + " instead of " + ChatColor.GOLD + "/bounty\n" + ChatColor.WHITE + "If you remove or edit someone else's bounty, or clear all bounties, refunds will not be issued to the original bounty placers");
+                        sender.sendMessage(bountyHelpMessageAdmin); // We use the admin message as this is a response to the server
                     }
                     return true;
                 }
