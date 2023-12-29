@@ -21,6 +21,7 @@ public class BountyCommands implements CommandExecutor {
     private final Main main;
     private static Economy econ = null;
     private static Permission perms = null;
+    private static final int ALLOWED_DECIMAL_PLACES = 2; // This will hold the amount of decimal places allowed in bounty rewards
     public List<Bounty> bounties = new ArrayList<Bounty>();
 
     // For display when a /bounty help is entered
@@ -32,7 +33,7 @@ public class BountyCommands implements CommandExecutor {
             + ChatColor.GOLD + "/bounty remove [target player] [player who placed the bounty (optional)] "
             + ChatColor.WHITE + "- Remove an already placed bounty. If no bounty placer is specified, it is assumed to be you. \n"
             + ChatColor.GOLD + "/bounty clearall "
-            + ChatColor.WHITE + "- Clear all bounties. "
+            + ChatColor.WHITE + "- Clear all bounties. \n"
             + ChatColor.GOLD + "/bounty pay [player who placed the bounty] "
             + ChatColor.WHITE + "- Pay off a bounty placed on you. \nYou can also do "
             + ChatColor.GOLD + "/bn"
@@ -46,7 +47,7 @@ public class BountyCommands implements CommandExecutor {
             + ChatColor.GOLD + "/bounty edit [target player] [$ new reward amount] "
             + ChatColor.WHITE + "- Change the reward amount on a bounty you placed. \n"
             + ChatColor.GOLD + "/bounty remove [target player] "
-            + ChatColor.WHITE + "- Remove a bounty you placed. "
+            + ChatColor.WHITE + "- Remove a bounty you placed. \n"
             + ChatColor.GOLD + "/bounty pay [player who placed the bounty] "
             + ChatColor.WHITE + "- Pay off a bounty placed on you. \nYou can also do "
             + ChatColor.GOLD + "/bn"
@@ -162,7 +163,6 @@ public class BountyCommands implements CommandExecutor {
                                     editBounty(sender, args[1], "God", args[2]); // Allow someone with permission to edit a bounty another has placed
                                 }
                             }
-
                         }
                     }
                     catch (Exception e) {
@@ -240,6 +240,9 @@ public class BountyCommands implements CommandExecutor {
             if (Withdraw(((Player) sender).getPlayer(), reward)) {
                 bounties.remove(b);
                 sender.sendMessage(ChatColor.GREEN + "The bounty placed on you by " + ChatColor.GOLD + placer + ChatColor.GREEN + " has been paid!");
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.sendMessage(ChatColor.GOLD + b.target + " has paid off the BOUNTY placed on them by " + b.sender + " for " + ChatColor.RED + "$" + b.reward);
+                }
             } else {
                 sender.sendMessage(ChatColor.RED + "Insufficient funds to pay bounty");
             }
@@ -249,6 +252,10 @@ public class BountyCommands implements CommandExecutor {
     }
 
     private void placeBounty(CommandSender sender, String target, String reward) {
+        if (!checkValidReward(reward)) {
+            sender.sendMessage(ChatColor.RED + "Reward amounts must be numbers with less than " + String.valueOf(ALLOWED_DECIMAL_PLACES) + " decimal places");
+            return;
+        }
         Bounty bounty = new Bounty();
         if (isValidTarget(target)) { // Check if player exists with this name, only works for online players
             bounty.target = target; // Will this work for saving data? I guess you can only kill them when online, thus can only complete bounties when online
@@ -258,7 +265,7 @@ public class BountyCommands implements CommandExecutor {
                     Player pSender = ((Player) sender).getPlayer();
                     bounty.sender = pSender.getName();
                     if (Withdraw(pSender, reward)) {
-                        bounties.add(bounty); // Will this end up saving incomplete data if the player isn't valid? Only seems to be placed when is complete
+                        bounties.add(bounty);
                         sender.sendMessage(ChatColor.GREEN + "Bounty placed");
                         for (Player player : Bukkit.getOnlinePlayers()) {
                             player.sendMessage(ChatColor.GOLD + pSender.getName() + " has placed a BOUNTY on " + target + " for " + ChatColor.RED + "$" + reward);
@@ -301,12 +308,6 @@ public class BountyCommands implements CommandExecutor {
                               sender.sendMessage(ChatColor.GREEN + "Bounty on " + target + " removed");
                               break;
                           }
-                          else {
-                              found = false;
-                          }
-                      }
-                      else {
-                          found = false;
                       }
                 }
                 if (!found) {
@@ -322,11 +323,6 @@ public class BountyCommands implements CommandExecutor {
                             sender.sendMessage(ChatColor.GREEN + "Bounty on " + target + " removed");
                             break;
                         }
-                        else {
-                            found = false;
-                        }
-                    } else {
-                        found = false;
                     }
                 }
                 if (!found) {
@@ -342,6 +338,10 @@ public class BountyCommands implements CommandExecutor {
 
     private void editBounty (CommandSender sender, String target, String placer, String reward) { // Only can change reward
         boolean found = false;
+        if (!checkValidReward(reward)) {
+            sender.sendMessage(ChatColor.RED + "Reward amounts must be numbers with less than " + String.valueOf(ALLOWED_DECIMAL_PLACES) + " decimal places");
+            return;
+        }
         if (isValidTarget(target)) {
             if (sender instanceof Player && placer == "null") {
                 for (Bounty bounty : bounties) {
@@ -361,12 +361,6 @@ public class BountyCommands implements CommandExecutor {
                             }
                             break;
                         }
-                        else {
-                            found = false;
-                        }
-                    }
-                    else {
-                        found = false;
                     }
                 }
                 if (!found) {
@@ -381,11 +375,7 @@ public class BountyCommands implements CommandExecutor {
                             bounty.reward = reward;
                             sender.sendMessage(ChatColor.GREEN + target + " reward edited to " + ChatColor.RED + "$" + reward);
                             break;
-                        } else {
-                            found = false;
                         }
-                    } else {
-                        found = false;
                     }
                 }
                 if (!found) {
@@ -400,8 +390,7 @@ public class BountyCommands implements CommandExecutor {
 
     public void loadBounty(List<String> bounty) { // Called from Main when loading bounties, loads bounties
         Bounty loadBounty = new Bounty();
-        if (bounty.toArray().length != 3) {
-        } else {
+        if (bounty.toArray().length == 3) {
             loadBounty.sender = bounty.get(0);
             loadBounty.target = bounty.get(1);
             loadBounty.reward = bounty.get(2);
@@ -419,6 +408,22 @@ public class BountyCommands implements CommandExecutor {
 
     public void clearBounties() {
         bounties.clear();
+    }
+
+    private boolean checkValidReward(String reward) {
+        try {
+            Double r = Double.parseDouble(reward);
+        } catch (Exception e) {
+            return false;
+        }
+        if (reward.indexOf('.') == -1) {
+            // We know there are no decimals, which is okay
+            return true;
+        }
+        int decimals = reward.length() - reward.indexOf('.') - 1;
+        // Ex: "3.124"
+        return decimals <= ALLOWED_DECIMAL_PLACES;
+
     }
 
     private boolean isValidTarget(String target) {
@@ -540,6 +545,7 @@ public class BountyCommands implements CommandExecutor {
             return false;
         }
     }
+
     public void Deposit (Player p, String amt) {
         double d = 0.0;
         try {

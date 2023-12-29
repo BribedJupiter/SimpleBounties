@@ -7,6 +7,8 @@ A simple, straight-forward Spigot plugin for servers using Minecraft 1.19+ to al
 - Clean up error messages
 - Clean up code
 - Revise /bounty help
+- Limit bounty reward decimal places to 2
+- A player will now receive a message telling them how many active bounties are on them when they join, if there are any. If there aren't, they will not receive a message
 
 # Dependencies
 EssentialsX and Vault.
@@ -36,6 +38,8 @@ To remove a bounty do /bounty remove [bounty target].
 
 To list all current bounties do /bounty list.
 
+To pay off a bounty and remove it from the list do /bounty pay [the person who placed the bounty]
+
 Do /bounty help for instructions on how to use the plugin.
 
 ### For Those With bounties.admin Permissions
@@ -56,9 +60,13 @@ Enjoy!
 - Add a log of completed bounties, maybe available as a book or a list of heads.
 - Add integration with Discord plugins so completion messages show up in Discord chats.
 - Add the ability to create a list of players that cannot have a bounty.
+- Add the ability to set the bounty decimal limit in-game
+- Add a toggle for the join messages
+- Add the ability to do /list player to get bounties on a specific player
+- Clean up Tab Completion to make it more extensible and easier to edit
 
 # Known issues
-As of version 1.0-RELEASE, if one is using the "Duels" plugin, bounties will be completed upon the completion of a duel.
+As of version 1.0-RELEASE, if one is using the "Duels" plugin, bounties will be completed upon the completion of a duel. This may be desireable or not depending on the server. 
 
 ### Note:
 Sometimes throughout the code you'll notice the word Quests in reference to this plugin. Originally, it

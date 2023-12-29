@@ -120,5 +120,4 @@ public final class Main extends JavaPlugin {
     public static Permission getPermissions() {
         return perms;
     }
-
 }
