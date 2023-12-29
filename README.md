@@ -1,5 +1,5 @@
 # SimpleBounties
-A simple, straight-forward Spigot plugin for servers using Minecraft 1.19+ to allow players to place and complete bounties on each other. 
+A simple, straight-forward Spigot plugin for servers using Minecraft 1.19+ to allow players to place and complete bounties on each other through a command system. 
 
 ### Version 1.1
 - Add the ability to pay off your own bounty
@@ -14,12 +14,12 @@ A simple, straight-forward Spigot plugin for servers using Minecraft 1.19+ to al
 EssentialsX and Vault.
 
 # Install
-Just download and drop the "Bounties-1.0-RELEASE.jar" file from the target folder into your server's plugin folder, and you're done!
+Just download and drop the "Bounties-1.1-RELEASE.jar" file from the "Versions" folder into your server's plugin folder, and you're done!
 
 # Permissions
 bounties.* - Allows basic access to the plugin. 
 
-bounties.admin - Allows operator permissions, such as the abilities to edit and remove other people's bounties. When an operator does that, it won't send a refund to the original bounty placer so use with caution. There is potential here to exploit the system and get infinite money by editing rewards to a really high number, so grant this permission with caution. It allows the use of the /bounty clearall command which removes all active bounties. Operators also have these permissions.
+bounties.admin - Allows operator permissions, such as the abilities to edit and remove other people's bounties. When an operator does that, it won't send a refund to the original bounty placer so use with caution. There is potential here to exploit the system and get infinite money by editing rewards to a really high number since it won't withdraw from your account, so grant this permission with caution. It allows the use of the /bounty clearall command which removes all active bounties. Operators also have these permissions.
 
 # Aliases
 /bn is equivalent to /bounty
@@ -66,9 +66,9 @@ Enjoy!
 - Clean up Tab Completion to make it more extensible and easier to edit
 
 # Known issues
-As of version 1.0-RELEASE, if one is using the "Duels" plugin, bounties will be completed upon the completion of a duel. This may be desireable or not depending on the server. 
+As of version 1.1-RELEASE, if one is using the "Duels" plugin, bounties will be completed upon the completion of a duel. This may be desirable or not depending on the server. 
 
 ### Note:
 Sometimes throughout the code you'll notice the word Quests in reference to this plugin. Originally, it
 was intended to become a fully featured questing plugin, but as development progressed I shifted focus and narrowed 
-the scope to just the bounties portion of the plugin. 
+the scope to just the bounties portion of the plugin without refactoring completely. 
