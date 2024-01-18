@@ -1,0 +1,106 @@
+plugins {
+	
+    id 'java' // Tell gradle this is a java project.
+    id 'com.github.johnrengelman.shadow' version '8.1.1' // Import utility to package libraries into .jar file.
+    id 'eclipse' // Import eclipse plugin for IDE integration.
+
+}
+
+java {
+ 
+	// Declare java version.
+ 	sourceCompatibility = JavaVersion.VERSION_17
+
+}
+
+group = "me.bribedjupiter.simplebounties" // Declare bundle identifier.
+version = "1.1" // Declare plugin version (will be in .jar).
+
+def apiVersion = "1.19" // Declare minecraft server target version.
+
+processResources {
+
+    def props = [
+        version: version,
+        apiVersion: apiVersion,
+    ]
+
+    inputs.properties props // Indicates to rerun if version changes.
+
+    filesMatching("plugin.yml") {
+
+        expand props
+
+    }
+
+}
+
+repositories {
+
+    mavenCentral()
+
+    maven {
+
+        url "https://repo.purpurmc.org/snapshots" // Get purpur API from purpur maven repository.
+
+    }
+    
+    maven {
+    
+        url "https://jitpack.io"
+    
+    }
+
+	maven {
+    
+		name "essentialsx-releases"
+    	url "https://repo.essentialsx.net/releases/" // Get EssentialsX API from EssentialsX repository.
+    
+	}
+    
+	maven {
+    
+		name "papermc"
+    	url "https://papermc.io/repo/repository/maven-public/"
+
+	}
+
+}
+
+dependencies {
+
+    compileOnly "org.purpurmc.purpur:purpur-api:1.19.4-R0.1-SNAPSHOT" // Declare purpur API version to be packaged.i
+
+	compileOnly 'net.essentialsx:EssentialsX:2.19.0' // Import EssentialsX API.
+
+	compileOnly "com.github.MilkBowl:VaultAPI:1.7" // Import Vault API.
+
+}
+
+shadowJar {
+
+    minimize()
+    
+}
+
+jar.dependsOn shadowJar
+
+tasks.jar.configure {
+
+    archiveClassifier = "part"
+
+}
+
+tasks.shadowJar.configure {
+
+    archiveClassifier = null
+
+}
+
+tasks.withType(JavaCompile).configureEach {
+
+    options.compilerArgs += ["-parameters"]
+    options.encoding = 'UTF-8' // Override the system character set with a universal set.
+    options.fork = true // Enable compilation in a separate daemon process.
+
+}
