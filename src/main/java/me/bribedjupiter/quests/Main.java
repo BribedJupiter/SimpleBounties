@@ -14,12 +14,19 @@ import me.bribedjupiter.quests.Bounties.Bounty;
 import me.bribedjupiter.quests.Bounties.BountyCommands;
 import me.bribedjupiter.quests.Bounties.BountyEvents;
 import me.bribedjupiter.quests.Bounties.TabCompletion;
+import me.realized.duels.api.Duels;
 // Vault
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 public final class Main extends JavaPlugin {
 
+	// Declare variable to hold class for passing.
+	private static Main plugin;
+	
+	// Declare empty duels API container to hold API.
+	static Duels api;
+	
 	FileConfiguration config = getConfig();
 
 	BountyCommands bountyCommands = new BountyCommands(this, econ, perms);
@@ -33,6 +40,13 @@ public final class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+
+		// Assign the plugin variable to the main class instance.
+		plugin = this;
+		
+		// Init Duels API.
+		api = (Duels) Bukkit.getServer().getPluginManager().getPlugin("Duels");
+
 		// Plugin startup logic.
 		config.options().copyDefaults(true); // Saves any new added key-value pairs as default so server doesn't get rid of them on restart. I think?
 		saveConfig();
@@ -132,12 +146,27 @@ public final class Main extends JavaPlugin {
 		return bountyCommands;
 	}
 
-	public static Economy getEconomy() {
+	public Economy getEconomy() {
 		return econ;
 	}
 
 	public static Permission getPermissions() {
 		return perms;
+	}
+
+	// Class constructor.
+	public static Main getPlugin() {
+
+		// Pass instance of main to other classes.
+		return plugin;
+
+	}
+	
+	// Pass the Duels API to other classes.
+	public static Duels getDuelsApi() {
+		
+		return api;
+		
 	}
 
 }

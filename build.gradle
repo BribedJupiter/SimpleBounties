@@ -71,9 +71,11 @@ dependencies {
 
     compileOnly "org.purpurmc.purpur:purpur-api:1.19.4-R0.1-SNAPSHOT" // Declare purpur API version to be packaged.i
 
-	compileOnly 'net.essentialsx:EssentialsX:2.19.0' // Import EssentialsX API.
+	compileOnly "net.essentialsx:EssentialsX:2.19.0" // Import EssentialsX API.
 
 	compileOnly "com.github.MilkBowl:VaultAPI:1.7" // Import Vault API.
+
+	compileOnly "com.github.Realizedd.Duels:duels-api:3.5.1" // Import Duels API.
 
 }
 

@@ -5,6 +5,7 @@ api-version: '${apiVersion}'
 authors: [BribedJupiter, NotAlexNoyle]
 description: Adds Bounties to your minecraft server!
 depend: [Essentials, Vault]
+soft-depend: [Duels]
 
 commands:
   bounty:
